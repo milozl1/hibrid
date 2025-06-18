@@ -2,17 +2,52 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <title>Calendar Lucru</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-  <!-- Firebase App (compat) -->
+  <title>Calendar Office Hibrid</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f6f8fa; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: 32px auto; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px #0001; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 16px; }
+    .day { background: #f5f5f5; border-radius: 6px; min-height: 70px; padding: 4px; position: relative; }
+    .today { border: 2px solid #2196f3; }
+    .worked-office { background: #e3f2fd; }
+    .free { background: #e8f5e9; }
+    .remote-work { background: #fff3e0; }
+    .weekend { background: #f0f0f0; color: #bbb; }
+    .holiday-weekend { background: #ffe0e0; }
+    .calendar-grid select { width: 100%; margin-top: 4px; }
+    #monthTitle { text-align: center; font-size: 1.5em; margin: 12px 0; }
+    #summary { margin: 16px 0; }
+    #userProfile { margin: 16px 0; }
+    button { margin: 4px; padding: 6px 16px; border: none; border-radius: 6px; background: #2196f3; color: #fff; cursor: pointer; font-size: 1em; }
+    button:hover { background: #1976d2; }
+    .bulina { display:inline-block;width:18px;height:18px;border-radius:50%;background:#2196f3;color:#fff;text-align:center;line-height:18px;font-size:12px;margin-right:2px; }
+    .dark-mode { background: #222; color: #eee; }
+    .dark-mode .container { background: #292929; }
+    .dark-mode .day { background: #333; color: #eee; }
+    .dark-mode .worked-office { background: #1e3a5c; }
+    .dark-mode .free { background: #1b5e20; }
+    .dark-mode .remote-work { background: #8d6e63; }
+    .dark-mode button { background: #1565c0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button id="toggleThemeBtn">Comută temă întunecată</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button id="prevBtn">← Luna Anterioară</button>
+      <div id="monthTitle"></div>
+      <button id="nextBtn">Luna Următoare →</button>
+      <button id="toggleWeekViewBtn">Vizualizare săptămânală</button>
+    </div>
+    <div id="userProfile"></div>
+    <div id="calendarGrid" class="calendar-grid"></div>
+    <div id="summary"></div>
+    <button id="logoutBtn">Delogare</button>
+  </div>
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <!-- Firestore (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script>
-    // Configul tău Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAWWO3oeiIEZNf5DrYD2LvSBVV0U-aw-Oo",
       authDomain: "office-hibrid.firebaseapp.com",
@@ -25,95 +60,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
   </script>
-</head>
-<body>
-  <button id="toggleThemeBtn" style="margin-bottom:16px;">Comută temă întunecată</button>
-  
-  <div id="calendarHeader">
-    <button id="prevBtn">⬅ Luna Anterioară</button>
-    <h2 id="monthTitle"></h2>
-    <button id="nextBtn">Luna Următoare ➡</button>
-    <button id="toggleWeekViewBtn" style="margin-left:10px;">Vizualizare săptămânală</button>
-  </div>
-
-  <div id="userProfile" class="section-card" style="margin-bottom:16px;"></div>
-
-  <fieldset class="section-card">
-    <legend><strong>Utilizatori</strong></legend>
-    <div style="margin-bottom:8px;">
-      <label for="userSelect">Utilizator:</label>
-      <select id="userSelect"></select>
-      <label style="margin-left:12px;">
-        <input type="checkbox" id="teamView"> Vizualizare echipă
-      </label>
-    </div>
-    <div style="margin-bottom:8px;">
-      <input id="newUserInput" placeholder="Nume utilizator" style="width:180px;" />
-      <button id="addUserBtn"><i class="fa fa-user-plus"></i> Adaugă utilizator</button>
-    </div>
-    <div id="userList"></div>
-  </fieldset>
-
-  <fieldset class="section-card">
-    <legend><strong>Acțiuni calendar</strong></legend>
-    <div class="actions-row">
-      <button id="exportBtn"><i class="fa fa-file-export"></i> Export</button>
-      <input type="file" id="importInput" style="display:none" accept=".csv" />
-      <button id="importBtn"><i class="fa fa-file-import"></i> Import</button>
-      <button id="resetBtn"><i class="fa fa-undo"></i> Resetare lună</button>
-      <button id="bulkOfficeBtn"><i class="fa fa-building"></i> Toate Office</button>
-      <button id="bulkHomeBtn"><i class="fa fa-house"></i> Toate Home</button>
-    </div>
-  </fieldset>
-
-  <fieldset class="section-card">
-    <legend><strong>Sărbători personalizate</strong></legend>
-    <div style="margin-bottom:8px;">
-      <input type="date" id="customHolidayDate">
-      <input type="text" id="customHolidayName" placeholder="Nume sărbătoare" style="width:180px;">
-      <button id="addHolidayBtn">Adaugă sărbătoare</button>
-    </div>
-    <div id="customHolidaysList"></div>
-  </fieldset>
-
-  <fieldset class="section-card">
-    <legend><strong>Filtrare și căutare</strong></legend>
-    <div>
-      <select id="filterType">
-        <option value="">Toate tipurile</option>
-        <option value="office">Office</option>
-        <option value="home">Home</option>
-        <option value="vacation">Vacanță</option>
-      </select>
-      <input type="number" id="filterDay" min="1" max="31" placeholder="Ziua" style="width:70px;">
-      <input id="filterUser" placeholder="Filtru utilizator (echipă)" style="width:180px;">
-      <button id="filterBtn">Filtrează</button>
-      <button id="clearFilterBtn">Resetează</button>
-    </div>
-  </fieldset>
-
-  <div id="massEditPopup" style="display:none;position:absolute;z-index:1000;background:#fff;padding:8px 12px;border-radius:8px;box-shadow:0 2px 8px #0002;">
-  <select id="massEditPopupType">
-    <option value="office">Office</option>
-    <option value="home">Home</option>
-    <option value="vacation">Vacanță</option>
-  </select>
-  <button id="massEditPopupApply">Aplică</button>
-  <button id="massEditCancelPopup">Anulează</button>
-</div>
-
-  <button id="showStatsBtn"><i class="fa fa-chart-pie"></i> Statistici lunare</button>
-<div id="statsModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;background:#fff;padding:24px 32px;border-radius:12px;box-shadow:0 4px 32px #0005;">
-  <div id="statsModalContent"></div>
-  <button onclick="document.getElementById('statsModal').style.display='none'">Închide</button>
-</div>
-
-  <div id="calendarGrid" class="calendar-grid"></div>
-  <div id="summary"></div>
-  <div id="statsContainer" style="margin:20px 0;"></div>
-
-  <button id="logoutBtn" style="margin:10px 0 10px 0;">Delogare</button>
-
   <script src="script.js"></script>
 </body>
 </html>
