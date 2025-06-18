@@ -1,0 +1,495 @@
+/* Stil general pentru container */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f7f9fc;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+body.dark-mode {
+  background: #181c24;
+  color: #e0e6ed;
+}
+
+/* Titlu lună + butoane */
+#calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  padding: 8px 0;
+}
+
+#calendarHeader h2 {
+  font-size: 24px;
+  margin: 0;
+  color: #090909;
+}
+
+button {
+  padding: 6px 12px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Calendar grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .calendar-grid > div,
+body.dark-mode .day {
+  background: #23283a;
+  color: #e0e6ed;
+  border: 1px solid #2d3347;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  background: #fafafa;
+  border-radius: 8px;
+  min-height: 80px;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.day:hover {
+  background: #f0f8ff;
+  border-color: #cce4ff;
+}
+
+.day select {
+  margin-top: 5px;
+  padding: 4px 6px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+}
+
+body.dark-mode select,
+body.dark-mode input,
+body.dark-mode button {
+  background: #23283a;
+  color: #e0e6ed;
+  border: 1px solid #3a405a;
+  box-shadow: none;
+}
+
+body.dark-mode button {
+  background: #2d3347;
+  color: #e0e6ed;
+  border: 1px solid #3a405a;
+  transition: background 0.2s, color 0.2s;
+}
+
+body.dark-mode button:hover {
+  background: #3a405a;
+  color: #fff;
+}
+
+/* Zilele de antet (Lun, Mar...) */
+.calendar-grid > div:nth-child(-n + 7) {
+  font-weight: bold;
+  background: #e8f0fe;
+  border: none;
+  text-align: center;
+}
+
+/* Zile dezactivate */
+.day.disabled,
+.day select:disabled {
+  background: #eeeeee;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+body.dark-mode .day.disabled,
+body.dark-mode .day select:disabled {
+  background: #23283a;
+  color: #888;
+  border-color: #23283a;
+}
+
+/* Weekend */
+.day.weekend {
+  background: #fff6f6;
+  color: #999;
+}
+
+body.dark-mode .day.weekend {
+  background: #23283a;
+  color: #b0b0b0;
+}
+
+/* Sărbătoare legală în weekend */
+.day.holiday-weekend {
+  background: #fff0f0;
+  color: #d33;
+  border: 1px dashed #d33;
+}
+
+body.dark-mode .day.holiday-weekend {
+  background: #2d3347;
+  color: #ffb300;
+}
+
+/* Rezumat jos */
+#summary {
+  margin-top: 20px;
+  background: #fff;
+  border-left: 5px solid #007bff;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 15px;
+  line-height: 1.6;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode #summary {
+  background: #23283a;
+  color: #e0e6ed;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid #2d3347;
+}
+
+/* Evidențiere tipuri de zile */
+.day.worked-office {
+  background-color: #e0f0ff;
+  border: 2px solid #007bff;
+  color: #004a99;
+}
+
+body.dark-mode .day.worked-office {
+  background: #1565c0 !important;
+  color: #e3f2fd !important;
+  border: 2px solid #42a5f5;
+}
+
+.day.free {
+  background-color: #fff4c4;
+  border: 2px solid #ffd700;
+  color: #a57f00;
+}
+
+body.dark-mode .day.free {
+  background: #2e7d32 !important;
+  color: #e8f5e9 !important;
+  border: 2px solid #81c784;
+}
+
+.day.weekend {
+  background-color: #f2f2f2;
+  color: #999;
+}
+
+.day.holiday {
+  background-color: #ffe0e0;
+  border: 2px solid #ff4d4d;
+  color: #b30000;
+}
+
+.day.remote-work {
+  background-color: #d6f5d6;
+  border: 2px solid #5cd65c;
+  color: #267326;
+}
+
+body.dark-mode .day.remote-work {
+  background: #ffb300 !important;
+  color: #23283a !important;
+  border: 2px solid #ffe082;
+}
+
+/* Tooltip modern pentru sărbători */
+.day[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  background: #222;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  z-index: 10;
+  left: 50%;
+  top: 110%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Evidențiere zi curentă */
+.day.today {
+  border: 2px solid #ff9800 !important;
+  box-shadow: 0 0 0 2px #ffe0b2;
+}
+
+body.dark-mode .day.today {
+  border: 2px solid #ffb300 !important;
+  box-shadow: 0 0 0 2px #23283a;
+}
+
+/* Scrollbar custom pentru dark mode */
+body.dark-mode ::-webkit-scrollbar {
+  width: 8px;
+  background: #23283a;
+}
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: #2d3347;
+  border-radius: 8px;
+}
+
+/* Alte stiluri pentru dark mode */
+body.dark-mode fieldset {
+  background: #23283a;
+  border: 1px solid #2d3347;
+}
+
+body.dark-mode legend {
+  color: #bfc7d5;
+}
+
+body.dark-mode #calendarHeader {
+  background: #23283a;
+  border: 1px solid #2d3347;
+  border-radius: 8px;
+  padding: 8px 0;
+}
+
+body.dark-mode #calendarHeader h2 {
+  color: #e0e6ed;
+}
+
+body.dark-mode button,
+body.dark-mode select,
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="date"] {
+  background: #23283a;
+  color: #e0e6ed;
+  border: 1px solid #3a405a;
+  box-shadow: none;
+}
+
+body.dark-mode button {
+  background: #2d3347;
+  color: #e0e6ed;
+  border: 1px solid #3a405a;
+  transition: background 0.2s, color 0.2s;
+}
+
+body.dark-mode button:hover {
+  background: #3a405a;
+  color: #fff;
+}
+
+body.dark-mode select:disabled,
+body.dark-mode input:disabled {
+  background: #23283a;
+  color: #888;
+  border-color: #23283a;
+}
+
+body.dark-mode .calendar-grid > div,
+body.dark-mode .day {
+  background: #23283a;
+  color: #e0e6ed;
+  border: 1px solid #2d3347;
+}
+
+body.dark-mode .day label,
+body.dark-mode .day select,
+body.dark-mode .day input {
+  color: #e0e6ed;
+}
+
+body.dark-mode .day.disabled,
+body.dark-mode .day select:disabled {
+  background: #23283a;
+  color: #888;
+  border-color: #23283a;
+}
+
+body.dark-mode .day.today {
+  border: 2px solid #ffb300 !important;
+  box-shadow: 0 0 0 2px #23283a;
+}
+
+body.dark-mode .day.worked-office {
+  background: #1565c0 !important;
+  color: #e3f2fd !important;
+  border: 2px solid #42a5f5;
+}
+
+body.dark-mode .day.free {
+  background: #2e7d32 !important;
+  color: #e8f5e9 !important;
+  border: 2px solid #81c784;
+}
+
+body.dark-mode .day.remote-work {
+  background: #ffb300 !important;
+  color: #23283a !important;
+  border: 2px solid #ffe082;
+}
+
+body.dark-mode .day.weekend {
+  background: #23283a;
+  color: #b0b0b0;
+}
+
+body.dark-mode .day.holiday-weekend {
+  background: #2d3347;
+  color: #ffb300;
+}
+
+body.dark-mode #summary {
+  background: #23283a;
+  color: #e0e6ed;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid #2d3347;
+}
+
+body.dark-mode #statsContainer {
+  background: #23283a;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid #2d3347;
+}
+
+body.dark-mode #userList span {
+  color: #e0e6ed;
+}
+
+body.dark-mode #customHolidaysList {
+  color: #e0e6ed;
+}
+
+/* Tooltip modern pentru sărbători în dark mode */
+body.dark-mode .day[data-tooltip]:hover::after {
+  background: #23283a;
+  color: #ffb300;
+  border: 1px solid #3a405a;
+}
+
+body.dark-mode .day span span {
+  color: #e0e6ed !important;
+}
+
+.section-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+body.dark-mode .section-card {
+  background: #23283a;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+.day.selected-mass {
+  outline: 2px solid #2196f3;
+  background: #e3f2fd;
+}
+
+body.dark-mode .day.selected-mass {
+  outline: 2px solid #90caf9;
+  background: #23283a;
+}
+
+#massEditPopup {
+  position: fixed !important;
+  z-index: 9999 !important;
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px #0004;
+  min-width: 180px;
+}
+
+body.dark-mode #massEditPopup {
+  background: #23283a;
+  color: #e0e6ed;
+}
+
+#statsModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  max-width: 95vw;
+  max-height: 90vh;
+  width: 400px;
+  min-width: 260px;
+  overflow-y: auto;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background: #fff;
+  padding: 18px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 32px #0005;
+}
+
+#statsModal canvas {
+  max-width: 100%;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+@media (max-width: 500px) {
+  #statsModal {
+    width: 98vw;
+    min-width: unset;
+    padding: 8px 2vw;
+  }
+}
+
+body.dark-mode #statsModal {
+  background: #0c0e14;
+  color: #e0e6ed;
+  box-shadow: 0 4px 32px #000a;
+}
+
+body.dark-mode #statsModal button {
+  background: #13151d;
+  color: #e0e6ed;
+  border: 1px solid #040404;
+}
+
+body.dark-mode #statsModal h3,
+body.dark-mode #statsModal h4 {
+  color: #ffb300;
+}
+
+/* Removed incomplete selector to fix error */
