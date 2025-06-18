@@ -77,12 +77,14 @@ function saveSelectionsToDB(user, year, month, selections) {
     .doc(`${user}_${year}_${month}`)
     .set({ user, year, month, selections });
 }
+
 function loadSelectionsFromDB(user, year, month) {
   return db.collection("calendars")
     .doc(`${user}_${year}_${month}`)
     .get()
     .then(doc => doc.exists ? doc.data().selections : []);
 }
+
 function loadAllSelectionsFromDB(year, month) {
   return db.collection("calendars")
     .where("year", "==", year)
